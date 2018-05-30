@@ -15,6 +15,13 @@ class ViewController: UIViewController {
         let name: String
         let link: String
         let imageUrl: String
+        
+        init(json: [String: Any]) {
+            id = json["id"] as? Int ?? -1
+            name = json["name"] as? String ?? ""
+            link = json["link"] as? String ?? ""
+            imageUrl = json["imageUrl"] as? String ?? ""
+        }
     }
     
     override func viewDidLoad() {
@@ -29,8 +36,19 @@ class ViewController: UIViewController {
             
             guard let data = data else { return }
             
-            let dataAsString = String(data: data, encoding: .utf8)
-            print(dataAsString!)
+            //let dataAsString = String(data: data, encoding: .utf8)
+            //print(dataAsString!)
+            
+            do {
+                guard let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String: Any] else { return }
+                
+                let course = Course(json: json)
+                print(course.name)
+                //print(json)
+            } catch let jsonErr {
+                print("Error serializing json:", jsonErr)
+            }
+            
         }.resume()
         
         //let myCourse = Course(id: 1, name: "my course", link: "some link", imageUrl: "some image url")
